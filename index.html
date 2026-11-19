@@ -19,6 +19,11 @@ body{height:900vh}
 #intro div:first-child{letter-spacing:.7em;color:#ffd60a;font-size:clamp(11px,1.6vw,20px)}
 #intro div:last-child{margin-top:8px;color:#7fe;letter-spacing:.3em;font-size:clamp(11px,1.3vw,16px)}
 #vid{position:fixed;z-index:4;left:50%;top:50%;width:min(80vw,1100px);transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;border:2px solid #39ff8c;box-shadow:0 0 120px rgba(57,255,140,.5);transition:.3s}
+#man{position:fixed;z-index:4;inset:0;display:grid;place-items:center;text-align:center;opacity:0;pointer-events:none;padding:0 7vw}
+#man .mk{letter-spacing:.6em;color:#c26bff;font-size:clamp(11px,1.4vw,18px);margin-bottom:2vh}
+#man h3{margin:0 0 2vh;font:400 clamp(22px,3.6vw,56px)/1.1 Georgia,serif;font-style:italic;color:#e9e4d8}
+#man h2{margin:0;font:900 clamp(34px,7.2vw,120px)/1 Impact,'Arial Black',sans-serif;text-transform:uppercase;color:#fff;text-shadow:0 0 50px rgba(194,107,255,.75),0 0 8px #fff;max-width:14em}
+#man h2 span{color:#c26bff}
 #end{position:fixed;z-index:6;inset:0;display:grid;place-items:center;text-align:center;opacity:0;pointer-events:none}
 #end h2{margin:0;font:900 clamp(56px,13vw,230px)/.9 Impact,'Arial Black',sans-serif;text-transform:uppercase;color:#ffd60a;text-shadow:0 0 60px rgba(255,214,10,.8),6px 0 #ff2daa,-6px 0 #00e5ff}
 #end a{pointer-events:auto;display:inline-block;margin-top:3vh;color:#000;background:#39ff8c;padding:16px 34px;font:900 24px Impact;letter-spacing:.1em;text-decoration:none}
@@ -34,6 +39,7 @@ noscript .ns{position:relative;z-index:9;padding:8vh 6vw;font:18px/2 Consolas,mo
 <audio id="bgm" src="assets/music.m4a" loop preload="auto"></audio>
 <video id="vid" src="assets/ad.mp4" muted loop playsinline></video>
 <div id="ring"></div>
+<div id="man"><div><div class="mk">PURPLE TEAM // THE CODE</div><h3>If a hacker is a nightmare&hellip;</h3><h2>a better hacker running a <span>purple team</span> is a nightmare's worst nightmare.</h2></div></div>
 <div id="end"><div><h2>Build<br>something<br>loud.</h2><a href="https://github.com/Tootenramen">GITHUB.COM/TOOTENRAMEN</a></div></div>
 <button id="snd">&#9632; MUTE</button>
 <noscript><div class="ns"><h1>Gustavo Freitas</h1><p>Cybersecurity Visionary. 10 years in the SOC.</p><p><a href="https://github.com/Tootenramen">github.com/Tootenramen</a></p></div></noscript>
@@ -58,7 +64,7 @@ buildName();addEventListener('resize',buildName);
 let mx=-999,my=-999;addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY});
 const q=new URLSearchParams(location.search),force=q.get('p');
 function target(){const m=document.documentElement.scrollHeight-innerHeight;return force!==null?+force:scrollY/m}
-const SEC=[[0,"00 / ARRIVAL"],[.06,"01 / THE WORK"],[.78,"02 / THE PITCH"],[.9,"03 / THE CALL"]];
+const SEC=[[0,"00 / ARRIVAL"],[.06,"01 / THE WORK"],[.62,"02 / THE CODE"],[.78,"03 / THE PITCH"],[.9,"04 / THE CALL"]];
 const snd=document.getElementById('snd'),bgm=document.getElementById('bgm');let userMuted=false;
 function startBgm(){if(userMuted||!bgm.paused)return;bgm.volume=.9;const r=bgm.play();if(r&&r.catch)r.catch(()=>{})}
 startBgm();bgm.addEventListener('canplay',startBgm);
@@ -72,8 +78,9 @@ snd.onclick=e=>{e.stopPropagation();userMuted=!userMuted;if(userMuted){bgm.pause
  S.forEach(s=>{s.z-=2+sp*900+(p>.06?6:0);if(s.z<=1){s.z=1500;s.x=(Math.random()-.5)*2200;s.y=(Math.random()-.5)*2200}
   const k=420/s.z,X=W/2+s.x*k,Y=H/2+s.y*k,k2=420/(s.z+18+sp*700),X2=W/2+s.x*k2,Y2=H/2+s.y*k2;sx.strokeStyle=`rgba(${s.c},${Math.min(1,1.2-s.z/1500)})`;sx.lineWidth=Math.min(3,k*1.6);sx.beginPath();sx.moveTo(X2,Y2);sx.lineTo(X,Y);sx.stroke()});
  // tunnel
- const cardP=Math.min(1,Math.max(0,(p-.04)/.74));tun.style.transform=`translateZ(${cardP*(TOTAL-300)}px)`;
- tun.style.opacity=p>.78?Math.max(0,1-(p-.78)*18):1;
+ const cardP=Math.min(1,Math.max(0,(p-.04)/.58));tun.style.transform=`translateZ(${cardP*(TOTAL-300)}px)`;
+ tun.style.opacity=p>.62?Math.max(0,1-(p-.62)*20):1;
+ const mp=Math.max(0,Math.min(1,(p-.64)/.04))*Math.max(0,Math.min(1,(.78-p)/.03));const man=document.getElementById('man');man.style.opacity=mp;man.style.transform=`scale(${1.12-.12*mp})`;
  // name particles
  const form=Math.max(0,1-p/.05);nx.clearRect(0,0,nc.width,nc.height);
  if(form>0.01){pt.forEach(a=>{const dx=mx-a.x,dy=my-a.y,d2=dx*dx+dy*dy;if(d2<14000){a.x-=dx*.08;a.y-=dy*.08}
