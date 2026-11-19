@@ -37,7 +37,7 @@ text{font-family:Impact,'Arial Black','Haettenschweiler',sans-serif}
 <rect y="0" width="1280" height="10" fill="#ffd60a"/>
 <rect y="450" width="1280" height="10" fill="#ffd60a"/>
 <g class="shake">
-<text class="m" x="64" y="82" font-size="20" fill="#ffd60a" letter-spacing="9">SOAR ENGINEER  //  INCIDENT RESPONDER  //  GIAC GCIH</text>
+<text class="m" x="64" y="82" font-size="20" fill="#ffd60a" letter-spacing="9">CYBERSECURITY VISIONARY  //  SOAR  //  INCIDENT RESPONSE  //  GIAC GCIH</text>
 <text x="60" y="230" font-size="172" fill="#000" opacity=".6" transform="translate(8 8)">GUSTAVO FREITAS</text>
 <text x="60" y="230" font-size="172" fill="url(#gold)" filter="url(#glow)" textLength="1160" lengthAdjust="spacingAndGlyphs">GUSTAVO FREITAS</text>
 <text x="60" y="230" font-size="172" fill="url(#sweep)" textLength="1160" lengthAdjust="spacingAndGlyphs" style="mix-blend-mode:overlay">GUSTAVO FREITAS</text>
