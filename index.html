@@ -80,7 +80,7 @@ buildName();addEventListener('resize',buildName);
 let mx=-999,my=-999;addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY});
 const q=new URLSearchParams(location.search),force=q.get('p');
 let auto=true,t0=performance.now();
-const KF=[[0,0],[1.8,0],[10.2,.64],[10.7,.69],[13.8,.74],[14.2,.79],[16.8,.89],[17.04,.93],[18.2,.985],[20.9,1]];
+const KF=[[0,0],[1.8,0],[10.2,.64],[10.7,.68],[16.4,.745],[16.8,.79],[17.04,.93],[18.2,.985],[20.9,1]];
 function clk(){return (bgm.paused?(performance.now()-t0)/1000:bgm.currentTime)%20.9}
 function autoP(){const t=clk();for(let i=1;i<KF.length;i++)if(t<=KF[i][0]){const a=KF[i-1],b=KF[i];return a[1]+(b[1]-a[1])*(t-a[0])/(b[0]-a[0])}return 1}
 ['wheel','touchmove'].forEach(e=>addEventListener(e,()=>{auto=false},{passive:true}));
