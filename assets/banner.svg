@@ -1,46 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 460" width="1280" height="460">
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#070b10"/><stop offset="1" stop-color="#0d1a1a"/></linearGradient>
-<pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" fill="none" stroke="#39ff8c" stroke-opacity=".10"/></pattern>
-<filter id="glow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="bg" cx=".5" cy="1.1" r="1.1"><stop offset="0" stop-color="#2a1a00"/><stop offset=".45" stop-color="#0b0b0e"/><stop offset="1" stop-color="#050507"/></radialGradient>
+<linearGradient id="sweep" gradientUnits="userSpaceOnUse" x1="-400" y1="0" x2="-100" y2="0">
+<stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset=".5" stop-color="#ffffff" stop-opacity="1"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="1900 0" dur="4.5s" repeatCount="indefinite"/>
+</linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#ffd60a"/><stop offset="1" stop-color="#c77d00"/></linearGradient>
+<filter id="glow" x="-20%" y="-30%" width="140%" height="160%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
 <style>
-text{font-family:'Arial Black',Impact,'Segoe UI',sans-serif}
+text{font-family:Impact,'Arial Black','Haettenschweiler',sans-serif}
 .m{font-family:Consolas,'SF Mono',Menlo,monospace;font-weight:700}
-.scan{animation:scan 5s linear infinite}
-@keyframes scan{from{transform:translateY(-40px)}to{transform:translateY(440px)}}
-.grid{animation:gr 3s linear infinite}
-@keyframes gr{from{transform:translateY(0)}to{transform:translateY(60px)}}
-.bar{transform-box:fill-box;transform-origin:bottom;animation:eq 1.3s ease-in-out infinite}
-@keyframes eq{0%,100%{transform:scaleY(.2)}50%{transform:scaleY(1)}}
+.ember{animation:rise linear infinite;opacity:0}
+@keyframes rise{0%{transform:translateY(0);opacity:0}10%{opacity:.9}100%{transform:translateY(-480px);opacity:0}}
 .k{opacity:0;animation:kw 12s infinite}
-@keyframes kw{0%{opacity:0;transform:translateY(14px)}3%,22%{opacity:1;transform:none}25%,100%{opacity:0}}
-.type{clip-path:inset(0 100% 0 0);animation:ty 3.2s steps(26) .3s forwards}
-@keyframes ty{to{clip-path:inset(0 0 0 0)}}
-.cur{animation:bl 1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
-.pulse{animation:pl 1.3s ease-in-out infinite}@keyframes pl{50%{opacity:.4}}
+@keyframes kw{0%{opacity:0;transform:translateX(-30px)}3%,22%{opacity:1;transform:none}25%,100%{opacity:0;transform:translateX(30px)}}
+.slash{animation:sl 4.5s ease-in-out infinite}
+@keyframes sl{0%{transform:scaleX(0)}15%,85%{transform:scaleX(1)}100%{transform:scaleX(0)}}
+.beat{animation:bt 1.3s ease-in-out infinite}@keyframes bt{0%,100%{opacity:.35}50%{opacity:1}}
+.shake{animation:sh 6s infinite}
+@keyframes sh{0%,92%,100%{transform:none}93%{transform:translate(-4px,2px)}94%{transform:translate(5px,-2px)}95%{transform:translate(-3px,0)}96%{transform:none}}
 </style>
-<rect width="1280" height="400" fill="url(#bg)"/>
-<g class="grid"><rect y="-60" width="1280" height="520" fill="url(#grid)"/></g>
-<text x="60" y="170" font-size="84" fill="#f5f5f5" filter="url(#glow)">Gustavo <tspan fill="#ffd60a">Freitas</tspan></text>
-<text class="m" x="60" y="222" font-size="26" fill="#00e5ff">&gt; <tspan class="type">customer success engineer</tspan><tspan class="cur" fill="#39ff8c">_</tspan></text>
-<g font-size="40" fill="#39ff8c" filter="url(#glow)">
-<text class="k" x="60" y="296" style="animation-delay:0s">SOAR &amp; Security Automation</text>
-<text class="k" x="60" y="296" fill="#ffd60a" style="animation-delay:3s">Incident Response . GIAC GCIH</text>
-<text class="k" x="60" y="296" fill="#ff2daa" style="animation-delay:6s">Enterprise customers at Torq</text>
-<text class="k" x="60" y="296" fill="#00e5ff" style="animation-delay:9s">Part tool. Part art.</text>
+<rect width="1280" height="460" fill="url(#bg)"/>
+<g fill="#ff7a00">
+<circle class="ember" cx="120" cy="470" r="2.5" style="animation-duration:5s;animation-delay:0s"/>
+<circle class="ember" cx="260" cy="470" r="2" style="animation-duration:6.5s;animation-delay:1s"/>
+<circle class="ember" cx="410" cy="470" r="3" style="animation-duration:5.5s;animation-delay:2.2s"/>
+<circle class="ember" cx="570" cy="470" r="2" style="animation-duration:7s;animation-delay:.6s"/>
+<circle class="ember" cx="700" cy="470" r="2.5" style="animation-duration:5.8s;animation-delay:3s"/>
+<circle class="ember" cx="840" cy="470" r="3" style="animation-duration:6.2s;animation-delay:1.7s"/>
+<circle class="ember" cx="980" cy="470" r="2" style="animation-duration:5.2s;animation-delay:2.8s"/>
+<circle class="ember" cx="1120" cy="470" r="2.5" style="animation-duration:6.8s;animation-delay:.3s"/>
+<circle class="ember" cx="1220" cy="470" r="2" style="animation-duration:5.6s;animation-delay:3.6s"/>
+<circle class="ember" cx="50" cy="470" r="2" style="animation-duration:6s;animation-delay:4s"/>
 </g>
-<text class="m" x="60" y="360" font-size="18" fill="#88aaaa">github.com/Tootenramen</text>
-<g fill-opacity=".85">
-<rect class="bar" x="900" y="120" width="22" height="180" fill="#39ff8c" style="animation-delay:0s"/>
-<rect class="bar" x="934" y="120" width="22" height="180" fill="#00e5ff" style="animation-delay:.15s"/>
-<rect class="bar" x="968" y="120" width="22" height="180" fill="#ffd60a" style="animation-delay:.3s"/>
-<rect class="bar" x="1002" y="120" width="22" height="180" fill="#ff2daa" style="animation-delay:.45s"/>
-<rect class="bar" x="1036" y="120" width="22" height="180" fill="#39ff8c" style="animation-delay:.6s"/>
-<rect class="bar" x="1070" y="120" width="22" height="180" fill="#00e5ff" style="animation-delay:.75s"/>
-<rect class="bar" x="1104" y="120" width="22" height="180" fill="#ffd60a" style="animation-delay:.9s"/>
-<rect class="bar" x="1138" y="120" width="22" height="180" fill="#ff2daa" style="animation-delay:1.05s"/>
+<rect y="0" width="1280" height="10" fill="#ffd60a"/>
+<rect y="450" width="1280" height="10" fill="#ffd60a"/>
+<g class="shake">
+<text class="m" x="64" y="82" font-size="20" fill="#ffd60a" letter-spacing="9">SOAR ENGINEER  //  INCIDENT RESPONDER  //  GIAC GCIH</text>
+<text x="60" y="230" font-size="172" fill="#000" opacity=".6" transform="translate(8 8)">GUSTAVO FREITAS</text>
+<text x="60" y="230" font-size="172" fill="url(#gold)" filter="url(#glow)" textLength="1160" lengthAdjust="spacingAndGlyphs">GUSTAVO FREITAS</text>
+<text x="60" y="230" font-size="172" fill="url(#sweep)" textLength="1160" lengthAdjust="spacingAndGlyphs" style="mix-blend-mode:overlay">GUSTAVO FREITAS</text>
 </g>
-<text class="m" x="900" y="335" font-size="15" fill="#88aaaa">click for the full animated site</text>
-<rect class="scan" width="1280" height="40" fill="#39ff8c" fill-opacity=".05"/>
+<rect class="slash" x="64" y="262" width="1152" height="5" fill="#e11d1d" style="transform-origin:64px 0"/>
+<g font-size="64" filter="url(#glow)">
+<text class="k" x="64" y="345" fill="#f5f5f5" style="animation-delay:0s">8+ YEARS IN THE SOC.</text>
+<text class="k" x="64" y="345" fill="#ff3b30" style="animation-delay:3s">I AUTOMATE THE FIGHT.</text>
+<text class="k" x="64" y="345" fill="#ffd60a" style="animation-delay:6s">I BUILD THE MACHINES THAT ANSWER.</text>
+<text class="k" x="64" y="345" fill="#f5f5f5" style="animation-delay:9s">PART TOOL. PART ART.</text>
+</g>
+<text class="m beat" x="64" y="410" font-size="22" fill="#ffd60a">&#9654; ENTER THE FULL SITE  //  tootenramen.github.io</text>
+<g transform="translate(1080 392)"><path d="M0 40 L50 0 L100 40 L50 20 Z" fill="#e11d1d" opacity=".9"/></g>
 </svg>
