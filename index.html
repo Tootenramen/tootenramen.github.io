@@ -29,8 +29,24 @@ body{height:900vh}
 #end a{pointer-events:auto;display:inline-block;margin-top:3vh;color:#000;background:#39ff8c;padding:16px 34px;font:900 24px Impact;letter-spacing:.1em;text-decoration:none}
 #snd{position:fixed;z-index:8;right:3vw;bottom:4vh;background:#000a;color:#39ff8c;border:1px solid #39ff8c;padding:8px 14px;font:12px Consolas,monospace;letter-spacing:.2em;cursor:pointer;opacity:.85;transition:.3s}
 noscript .ns{position:relative;z-index:9;padding:8vh 6vw;font:18px/2 Consolas,monospace}noscript a{color:#39ff8c}
+#gate{position:fixed;inset:0;z-index:100;background:#030306;display:grid;place-items:center;text-align:center;transition:opacity .9s,transform .9s;cursor:pointer}
+#gate.out{opacity:0;transform:scale(1.15);pointer-events:none}
+#gate .g1{letter-spacing:.55em;color:#c26bff;font-size:clamp(10px,1.5vw,18px);margin-bottom:2vh;text-shadow:0 0 18px #c26bff}
+#gate .g2{position:relative;font:900 clamp(48px,11vw,190px)/.95 Impact,'Arial Black',sans-serif;color:#ffd60a;text-shadow:0 0 50px rgba(255,214,10,.45);animation:gj 3.4s infinite}
+#gate .g2::before,#gate .g2::after{content:attr(data-t);position:absolute;left:0;right:0;top:0;opacity:.8}
+#gate .g2::before{color:#00e5ff;transform:translate(-4px,0);clip-path:inset(0 0 55% 0);animation:gs 3.4s infinite}
+#gate .g2::after{color:#ff2daa;transform:translate(4px,0);clip-path:inset(55% 0 0 0);animation:gs 3.4s infinite reverse}
+@keyframes gj{0%,90%,100%{transform:none}92%{transform:translate(-5px,2px)}94%{transform:translate(6px,-2px)}}
+@keyframes gs{0%,88%,100%{opacity:0}90%,96%{opacity:.9}}
+#gate .g3{letter-spacing:.4em;color:#9ab;font-size:clamp(10px,1.3vw,16px);margin-top:2vh}
+#enter{margin-top:6vh;background:transparent;color:#39ff8c;border:2px solid #39ff8c;padding:16px 56px;font:900 clamp(20px,2.4vw,32px) Impact,sans-serif;letter-spacing:.35em;cursor:pointer;animation:ep 1.4s ease-in-out infinite;transition:.2s}
+#enter:hover{background:#39ff8c;color:#000;box-shadow:0 0 50px rgba(57,255,140,.7)}
+@keyframes ep{50%{box-shadow:0 0 40px rgba(57,255,140,.55);transform:scale(1.04)}}
+#gate .g4{margin-top:14px;font-size:11px;letter-spacing:.4em;color:#567}
+html.lock,html.lock body{overflow:hidden}
 #ring{position:fixed;z-index:5;left:50%;top:50%;width:10px;height:10px;border:4px solid #fff;border-radius:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none}
 </style></head><body>
+<div id="gate"><div class="gi"><div class="g1">A NIGHTMARE'S WORST NIGHTMARE</div><div class="g2" data-t="GUSTAVO FREITAS">GUSTAVO FREITAS</div><div class="g3">CYBERSECURITY VISIONARY // PURPLE TEAM</div><button id="enter">ENTER</button><div class="g4">sound on</div></div></div>
 <canvas id="stars"></canvas><canvas id="name"></canvas>
 <div class="bar" id="bar"></div>
 <div class="hud top"><span>GUSTAVO FREITAS</span><span id="sec">00 / ARRIVAL</span><span>10 YEARS IN</span></div>
@@ -64,9 +80,14 @@ buildName();addEventListener('resize',buildName);
 let mx=-999,my=-999;addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY});
 const q=new URLSearchParams(location.search),force=q.get('p');
 function target(){const m=document.documentElement.scrollHeight-innerHeight;return force!==null?+force:scrollY/m}
+
+// ENTER gate: the click is the user gesture that lets the music play from frame one
+const gate=document.getElementById('gate');
+function enterSite(){if(entered)return;entered=true;document.documentElement.classList.remove('lock');gate.classList.add('out');setTimeout(()=>gate.remove(),1000);userMuted=false;bgm.currentTime=0;bgm.volume=.9;const r=bgm.play();if(r&&r.catch)r.catch(()=>{})}
+if(force!==null){entered=true;gate.remove()}else{document.documentElement.classList.add('lock');gate.addEventListener('click',enterSite);addEventListener('keydown',e=>{if(!entered&&(e.key==='Enter'||e.key===' '||e.key.startsWith('Arrow'))){e.preventDefault();enterSite()}},true)}
 const SEC=[[0,"00 / ARRIVAL"],[.06,"01 / THE WORK"],[.62,"02 / THE CODE"],[.78,"03 / THE PITCH"],[.9,"04 / THE CALL"]];
-const snd=document.getElementById('snd'),bgm=document.getElementById('bgm');let userMuted=false;
-function startBgm(){if(userMuted||!bgm.paused)return;bgm.volume=.9;const r=bgm.play();if(r&&r.catch)r.catch(()=>{})}
+const snd=document.getElementById('snd'),bgm=document.getElementById('bgm');let userMuted=false,entered=false;
+function startBgm(){if(typeof entered==='undefined'||!entered||userMuted||!bgm.paused)return;bgm.volume=.9;const r=bgm.play();if(r&&r.catch)r.catch(()=>{})}
 startBgm();bgm.addEventListener('canplay',startBgm);
 ['pointerdown','pointermove','keydown','touchstart','touchend','click','wheel','scroll'].forEach(ev=>addEventListener(ev,startBgm,{passive:true}));
 document.addEventListener('visibilitychange',()=>{if(document.hidden)bgm.pause();else startBgm()});
@@ -84,7 +105,7 @@ snd.onclick=e=>{e.stopPropagation();userMuted=!userMuted;if(userMuted){bgm.pause
  // name particles
  const form=Math.max(0,1-p/.05);nx.clearRect(0,0,nc.width,nc.height);
  if(form>0.01){pt.forEach(a=>{const dx=mx-a.x,dy=my-a.y,d2=dx*dx+dy*dy;if(d2<14000){a.x-=dx*.08;a.y-=dy*.08}
-  const e=force!==null?1:(p>0.001?.02:.07);a.x+=(a.hx-a.x)*e;a.y+=(a.hy-a.y)*e;
+  const e=force!==null?1:(!entered?0:(p>0.001?.02:.07));a.x+=(a.hx-a.x)*e;a.y+=(a.hy-a.y)*e;
   const out=p>.001?(1-form):0;nx.fillStyle=`rgba(${a.col},${form})`;nx.fillRect(a.x+(a.hx-nc.width/2)*out*6*0,a.y,a.r*2,a.r*2)})}
  document.getElementById('intro').style.opacity=Math.max(0,1-p*30);document.getElementById('hint').style.opacity=p<.02?1:0;
  // ad video
