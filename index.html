@@ -79,11 +79,17 @@ function buildName(){nc.width=innerWidth;nc.height=innerHeight;const o=document.
 buildName();addEventListener('resize',buildName);
 let mx=-999,my=-999;addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY});
 const q=new URLSearchParams(location.search),force=q.get('p');
-function target(){const m=document.documentElement.scrollHeight-innerHeight;return force!==null?+force:scrollY/m}
+let auto=true,t0=performance.now();
+const KF=[[0,0],[1.8,0],[10.2,.64],[10.7,.69],[13.8,.74],[14.2,.79],[16.8,.89],[17.04,.93],[18.2,.985],[20.9,1]];
+function clk(){return (bgm.paused?(performance.now()-t0)/1000:bgm.currentTime)%20.9}
+function autoP(){const t=clk();for(let i=1;i<KF.length;i++)if(t<=KF[i][0]){const a=KF[i-1],b=KF[i];return a[1]+(b[1]-a[1])*(t-a[0])/(b[0]-a[0])}return 1}
+['wheel','touchmove'].forEach(e=>addEventListener(e,()=>{auto=false},{passive:true}));
+addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp','PageDown','PageUp',' ','Home','End'].includes(e.key)&&entered)auto=false});
+function target(){const m=document.documentElement.scrollHeight-innerHeight;if(force!==null)return +force;if(auto&&entered){const v=autoP();scrollTo(0,v*m);return v}return scrollY/m}
 
 // ENTER gate: the click is the user gesture that lets the music play from frame one
 const gate=document.getElementById('gate');
-function enterSite(){if(entered)return;entered=true;document.documentElement.classList.remove('lock');gate.classList.add('out');setTimeout(()=>gate.remove(),1000);userMuted=false;bgm.currentTime=0;bgm.volume=.9;const r=bgm.play();if(r&&r.catch)r.catch(()=>{})}
+function enterSite(){if(entered)return;entered=true;document.documentElement.classList.remove('lock');gate.classList.add('out');setTimeout(()=>gate.remove(),1000);userMuted=false;t0=performance.now();bgm.currentTime=0;bgm.volume=.9;const r=bgm.play();if(r&&r.catch)r.catch(()=>{})}
 if(force!==null){entered=true;gate.remove()}else{document.documentElement.classList.add('lock');gate.addEventListener('click',enterSite);addEventListener('keydown',e=>{if(!entered&&(e.key==='Enter'||e.key===' '||e.key.startsWith('Arrow'))){e.preventDefault();enterSite()}},true)}
 const SEC=[[0,"00 / ARRIVAL"],[.06,"01 / THE WORK"],[.62,"02 / THE CODE"],[.78,"03 / THE PITCH"],[.9,"04 / THE CALL"]];
 const snd=document.getElementById('snd'),bgm=document.getElementById('bgm');let userMuted=false,entered=false;
