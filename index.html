@@ -22,8 +22,7 @@ body{height:900vh}
 #end{position:fixed;z-index:6;inset:0;display:grid;place-items:center;text-align:center;opacity:0;pointer-events:none}
 #end h2{margin:0;font:900 clamp(56px,13vw,230px)/.9 Impact,'Arial Black',sans-serif;text-transform:uppercase;color:#ffd60a;text-shadow:0 0 60px rgba(255,214,10,.8),6px 0 #ff2daa,-6px 0 #00e5ff}
 #end a{pointer-events:auto;display:inline-block;margin-top:3vh;color:#000;background:#39ff8c;padding:16px 34px;font:900 24px Impact;letter-spacing:.1em;text-decoration:none}
-#snd{position:fixed;z-index:8;right:3vw;bottom:4vh;background:#000a;color:#39ff8c;border:1px solid #39ff8c;padding:8px 14px;font:12px Consolas,monospace;letter-spacing:.2em;cursor:pointer;opacity:0;transition:.3s}
-#snd.on{opacity:1}
+#snd{position:fixed;z-index:8;right:3vw;bottom:4vh;background:#000a;color:#39ff8c;border:1px solid #39ff8c;padding:8px 14px;font:12px Consolas,monospace;letter-spacing:.2em;cursor:pointer;opacity:.85;transition:.3s}
 noscript .ns{position:relative;z-index:9;padding:8vh 6vw;font:18px/2 Consolas,monospace}noscript a{color:#39ff8c}
 #ring{position:fixed;z-index:5;left:50%;top:50%;width:10px;height:10px;border:4px solid #fff;border-radius:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none}
 </style></head><body>
@@ -32,10 +31,11 @@ noscript .ns{position:relative;z-index:9;padding:8vh 6vw;font:18px/2 Consolas,mo
 <div class="hud top"><span>GUSTAVO FREITAS</span><span id="sec">00 / ARRIVAL</span><span>10 YEARS IN</span></div>
 <div id="intro"><div>CYBERSECURITY VISIONARY</div><div>SOAR // INCIDENT RESPONSE // GIAC GCIH</div></div>
 <div class="stage"><div class="tun" id="tun"></div></div>
+<audio id="bgm" src="assets/music.m4a" loop preload="auto"></audio>
 <video id="vid" src="assets/ad.mp4" muted loop playsinline></video>
 <div id="ring"></div>
 <div id="end"><div><h2>Build<br>something<br>loud.</h2><a href="https://github.com/Tootenramen">GITHUB.COM/TOOTENRAMEN</a></div></div>
-<button id="snd">&#9654; SOUND ON</button>
+<button id="snd">&#9632; MUTE</button>
 <noscript><div class="ns"><h1>Gustavo Freitas</h1><p>Cybersecurity Visionary. 10 years in the SOC.</p><p><a href="https://github.com/Tootenramen">github.com/Tootenramen</a></p></div></noscript>
 <div class="hud hint" id="hint">SCROLL TO WARP</div>
 <script>
@@ -59,7 +59,12 @@ let mx=-999,my=-999;addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY
 const q=new URLSearchParams(location.search),force=q.get('p');
 function target(){const m=document.documentElement.scrollHeight-innerHeight;return force!==null?+force:scrollY/m}
 const SEC=[[0,"00 / ARRIVAL"],[.06,"01 / THE WORK"],[.78,"02 / THE PITCH"],[.9,"03 / THE CALL"]];
-const snd=document.getElementById('snd');snd.onclick=()=>{vid.muted=!vid.muted;snd.textContent=vid.muted?'▶ SOUND ON':'■ SOUND OFF'};const vid=document.getElementById('vid'),ring=document.getElementById('ring'),end=document.getElementById('end');let boom=0;
+const snd=document.getElementById('snd'),bgm=document.getElementById('bgm');let userMuted=false;
+function startBgm(){if(userMuted||!bgm.paused)return;bgm.volume=.9;const r=bgm.play();if(r&&r.catch)r.catch(()=>{})}
+startBgm();bgm.addEventListener('canplay',startBgm);
+['pointerdown','pointermove','keydown','touchstart','touchend','click','wheel','scroll'].forEach(ev=>addEventListener(ev,startBgm,{passive:true}));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)bgm.pause();else startBgm()});
+snd.onclick=e=>{e.stopPropagation();userMuted=!userMuted;if(userMuted){bgm.pause();snd.textContent='▶ SOUND ON'}else{startBgm();snd.textContent='■ MUTE'}};const vid=document.getElementById('vid'),ring=document.getElementById('ring'),end=document.getElementById('end');let boom=0;
 (function f(t){const dt=Math.min(.05,(t-last)/1000||.016);last=t;tp=target();const np=force!==null?tp:p+(tp-p)*Math.min(1,dt*6);vel=(np-p)/Math.max(dt,.001);p=np;
  const sp=Math.abs(vel);
  // stars
@@ -82,6 +87,6 @@ const snd=document.getElementById('snd');snd.onclick=()=>{vid.muted=!vid.muted;s
  const ep=Math.max(0,Math.min(1,(p-.93)/.05));end.style.opacity=ep;end.style.transform=`scale(${1.4-.4*ep})`;end.style.pointerEvents=ep>.5?'auto':'none';
  if(ep>0&&boom==0){boom=1;ring.style.transition='none';ring.style.opacity=1;ring.style.width=ring.style.height='10px';requestAnimationFrame(()=>{ring.style.transition='all 1.1s ease-out';ring.style.width=ring.style.height='260vmax';ring.style.opacity=0})}
  if(ep==0)boom=0;
- let sec=SEC[0][1];SEC.forEach(([a,b])=>{if(p>=a)sec=b});snd.classList.toggle('on',vp);document.getElementById('sec').textContent=sec;document.getElementById('bar').style.width=(p*100)+'%';
+ let sec=SEC[0][1];SEC.forEach(([a,b])=>{if(p>=a)sec=b});document.getElementById('sec').textContent=sec;document.getElementById('bar').style.width=(p*100)+'%';
  requestAnimationFrame(f)})(0);
 </script></body></html>
