@@ -467,7 +467,7 @@ function setTheme(t){
 /* ================= boot ================= */
 buildNav();setTheme('frost');render();
 $('#lava').addEventListener('loadedmetadata',e=>e.target.playbackRate=.35);
-if(!S.tourDone)setTimeout(()=>{if(!S.tourDone&&$('#tour').style.display!=='block')startTour()},900);
+startTour(); // demo pages: the walkthrough opens straight away on every visit
 </script>
 </body>
 </html>
