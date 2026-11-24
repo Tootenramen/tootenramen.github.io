@@ -62,10 +62,10 @@ html.lock,html.lock body{overflow:hidden}
 <noscript><div class="ns"><h1>Gustavo Freitas</h1><p>Cybersecurity Visionary. 10 years in the SOC.</p><p><a href="https://github.com/Tootenramen">github.com/Tootenramen</a></p></div></noscript>
 <div class="hud hint" id="hint">SCROLL TO WARP</div>
 <script>
-const P=[["otto","OTTO"],["drivethru-resume","DriveThru-Resume"],["fr33","FR33"],["power","POWER"],["fast","FAST"],["f33l","F33L"],["logsleuth","LogSleuth"],["breach-tabletop","Breach-Tabletop"],["qbr-studio","QBR-Studio"],["discovery-call-sim","Discovery-Call-Sim"],["human-uptime","Human-Uptime"],["night-shift-radio","Night-Shift-Radio"],["goodnight-root","Goodnight-Root"],["zero-day-standup","Zero-Day-Standup"],["after-action","After-Action"],["buddy-pact","Buddy-Pact"],["soc-wall","SOC-Wall"],["hyperflow-playground","Hyperflow-Playground"],["neatbook-toolkit","NeatBook-Toolkit"],["packet-playbook","Packet-Playbook"]];
+const P=[["santo","SANTO-Preview"],["otto","OTTO"],["drivethru-resume","DriveThru-Resume"],["power","POWER"],["fast","FAST"],["f33l","F33L"],["logsleuth","LogSleuth"],["breach-tabletop","Breach-Tabletop"],["qbr-studio","QBR-Studio"],["discovery-call-sim","Discovery-Call-Sim"],["human-uptime","Human-Uptime"],["night-shift-radio","Night-Shift-Radio"],["goodnight-root","Goodnight-Root"],["zero-day-standup","Zero-Day-Standup"],["after-action","After-Action"],["buddy-pact","Buddy-Pact"],["soc-wall","SOC-Wall"],["hyperflow-playground","Hyperflow-Playground"],["neatbook-toolkit","NeatBook-Toolkit"],["packet-playbook","Packet-Playbook"]];
 const GAP=950,START=1400,tun=document.getElementById('tun');
 P.forEach(([s,n],i)=>{const a=document.createElement('a');a.className='cd';a.href='https://tootenramen.github.io/'+n+'/';const side=i%2?1:-1,xo=side*(22+(i%3)*4),yo=((i*53)%30)-15;
- a.style.transform=`translate(-50%,-50%) translate3d(${xo}vw,${yo}vh,${-(START+i*GAP)}px) rotateY(${-side*18}deg)`;a.innerHTML=`<img src="assets/shots/${s}.jpg"><b>${n.replace(/-/g,' ')}</b>`;tun.appendChild(a)});
+ a.style.transform=`translate(-50%,-50%) translate3d(${xo}vw,${yo}vh,${-(START+i*GAP)}px) rotateY(${-side*18}deg)`;a.innerHTML=`<img src="assets/shots/${s}.jpg"><b>${n.replace(/-Preview$/,'').replace(/-/g,' ')}</b>`;tun.appendChild(a)});
 const TOTAL=START+P.length*GAP;
 // stars
 const sc=document.getElementById('stars'),sx=sc.getContext('2d');let W,H,S=[];function rs(){W=sc.width=innerWidth;H=sc.height=innerHeight}rs();addEventListener('resize',rs);
