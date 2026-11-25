@@ -149,6 +149,19 @@
   #tcard p{font-size:.88rem;color:var(--muted);line-height:1.5;margin-top:6px}
   .dots{display:flex;gap:5px}.dots i{width:6px;height:6px;border-radius:50%;background:var(--line2)}.dots i.on{background:var(--accent);width:18px;border-radius:3px;transition:.3s}
 </style>
+
+<style>
+#music{position:fixed;left:18px;bottom:18px;z-index:46;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:22px;background:var(--bar);backdrop-filter:blur(26px) saturate(1.8);-webkit-backdrop-filter:blur(26px) saturate(1.8);border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.25);color:var(--text);font-family:inherit}
+#music .vid{width:96px;height:54px;border-radius:14px;overflow:hidden;background:#000;flex:none;position:relative}
+#music .vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
+#music .meta{display:flex;flex-direction:column;min-width:0;max-width:130px}
+#music .t{font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#music .a{font-size:.68rem;color:var(--muted);white-space:nowrap}
+#mbtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);background:var(--hover);color:var(--text);display:grid;place-items:center;cursor:pointer;flex:none;transition:.2s}
+#mbtn:hover{transform:scale(1.08)}
+#mbtn svg{width:18px;height:18px}
+@media(max-width:700px){#music{left:10px;bottom:96px;padding:6px 10px 6px 6px}#music .vid{width:72px;height:41px}#music .meta{max-width:92px}}
+</style>
 </head>
 <body>
 
@@ -468,6 +481,30 @@ function setTheme(t){
 buildNav();setTheme('lava');render();
 $('#lava').addEventListener('loadedmetadata',e=>e.target.playbackRate=.35);
 startTour(); // demo pages: the walkthrough opens straight away on every visit
+</script>
+
+<div id="music" role="group" aria-label="Music player">
+  <div class="vid"><div id="ytp"></div></div>
+  <div class="meta"><span class="t">Lean Back</span><span class="a" id="mstate">Tap anywhere to play</span></div>
+  <button id="mbtn" aria-label="Mute music" title="Mute / unmute"></button>
+</div>
+<script>
+(function(){
+  var ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>';
+  var OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></svg>';
+  var p,ready=false,muted=false,started=false,btn=document.getElementById('mbtn'),st=document.getElementById('mstate');
+  function ui(){btn.innerHTML=muted?OFF:ON;btn.setAttribute('aria-label',muted?'Unmute music':'Mute music');st.textContent=started?(muted?'Muted':'Fat Joe, Remy Ma'):'Tap anywhere to play'}
+  function go(){if(!ready||started&&!muted&&p.getPlayerState()===1)return;try{p.unMute();p.setVolume(70);p.playVideo()}catch(e){}}
+  var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
+  window.onYouTubeIframeAPIReady=function(){
+    p=new YT.Player('ytp',{width:'96',height:'54',videoId:'j-1rhtVj8_0',playerVars:{autoplay:1,loop:1,playlist:'j-1rhtVj8_0',controls:0,playsinline:1,rel:0,modestbranding:1},
+      events:{onReady:function(){ready=true;p.setVolume(70);p.playVideo()},
+        onStateChange:function(e){if(e.data===1){started=true;ui()}if(e.data===0)p.playVideo()}}})};
+  ['pointerdown','keydown','touchstart'].forEach(function(ev){window.addEventListener(ev,function f(){if(started&&p&&p.getPlayerState&&p.getPlayerState()===1){window.removeEventListener(ev,f);return}go()},{passive:true})});
+  btn.addEventListener('click',function(e){e.stopPropagation();if(!ready)return;muted=!muted;if(muted)p.mute();else{p.unMute();p.playVideo()}ui()});
+  btn.addEventListener('pointerdown',function(e){e.stopPropagation()});
+  ui();
+})();
 </script>
 </body>
 </html>
