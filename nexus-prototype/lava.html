@@ -538,10 +538,10 @@ startTour(); // demo pages: the walkthrough opens straight away on every visit
   var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
   window.onYouTubeIframeAPIReady=function(){
     p=new YT.Player('ytp',{width:'96',height:'54',videoId:'wyzSmQPuCJ0',playerVars:{autoplay:1,controls:0,playsinline:1,rel:0,modestbranding:1},
-      events:{onReady:function(){ready=true;p.unMute();p.setVolume(70);p.playVideo();setTimeout(function(){if(p.getPlayerState()!==1||p.isMuted()){forced=true;p.mute();p.playVideo();ui()}},1200)},
+      events:{onReady:function(){ready=true;if(muted){p.mute();ui();return}p.unMute();p.setVolume(70);p.playVideo();setTimeout(function(){if(p.getPlayerState()!==1||p.isMuted()){forced=true;p.mute();p.playVideo();ui()}},1200)},
         onStateChange:function(e){if(e.data===1){started=true;ui()}if(e.data===0)play(cur+1)}}})};
-  ['pointerdown','pointerup','click','keydown','touchstart','touchend','mousedown'].forEach(function(ev){window.addEventListener(ev,function(){go()},{passive:true,capture:true})});
-  btn.addEventListener('click',function(e){e.stopPropagation();if(!ready||ju)return;muted=!muted;if(muted)p.mute();else{p.unMute();p.playVideo()}ui()});
+  ['pointerdown','pointerup','click','keydown','touchstart','touchend','mousedown'].forEach(function(ev){window.addEventListener(ev,function(e){if(e.target&&e.target.closest&&e.target.closest('#music'))return;go()},{passive:true,capture:true})});
+  btn.addEventListener('click',function(e){e.stopPropagation();if(!ready){muted=!muted;ui();return}muted=!muted;forced=false;if(muted){p.mute();p.pauseVideo()}else{p.unMute();p.setVolume(+document.getElementById('mvol').value||70);p.playVideo()}ui()});
   btn.addEventListener('pointerdown',function(e){e.stopPropagation()});
   var v=document.getElementById('mvol');v.addEventListener('input',function(){if(!ready)return;var n=+v.value;p.setVolume(n);if(n===0&&!muted){muted=true;p.mute()}else if(n>0&&muted){muted=false;p.unMute()}ui()});v.addEventListener('pointerdown',function(e){e.stopPropagation()});
   var nx=document.getElementById('mnext');nx.addEventListener('click',function(e){e.stopPropagation();if(ready)play(cur+1)});nx.addEventListener('pointerdown',function(e){e.stopPropagation()});
