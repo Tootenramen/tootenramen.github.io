@@ -158,6 +158,8 @@
 #music .t{font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #music .a{font-size:.68rem;color:var(--muted);white-space:nowrap}
 #mvol{width:70px;accent-color:var(--accent);cursor:pointer;flex:none}
+#mnext{width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);background:var(--hover);color:var(--text);display:grid;place-items:center;cursor:pointer;flex:none;transition:.2s}
+#mnext:hover{transform:scale(1.08)}#mnext svg{width:14px;height:14px}
 #mbtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);background:var(--hover);color:var(--text);display:grid;place-items:center;cursor:pointer;flex:none;transition:.2s}
 #mbtn:hover{transform:scale(1.08)}
 #mbtn svg{width:18px;height:18px}
@@ -486,25 +488,28 @@ if(!S.tourDone)setTimeout(()=>{if(!S.tourDone&&$('#tour').style.display!=='block
 
 <div id="music" role="group" aria-label="Music player">
   <div class="vid"><div id="ytp"></div></div>
-  <div class="meta"><span class="t">Lean Back</span><span class="a" id="mstate">Tap anywhere to play</span></div>
-  <input id="mvol" type="range" min="0" max="100" value="70" aria-label="Volume"><button id="mbtn" aria-label="Mute music" title="Mute / unmute"></button>
+  <div class="meta"><span class="t" id="mtitle">Lean Back</span><span class="a" id="mstate">Tap anywhere to play</span></div>
+  <input id="mvol" type="range" min="0" max="100" value="70" aria-label="Volume"><button id="mnext" aria-label="Next song" title="Next song"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5l9 7-9 7V5zM17 5h2v14h-2z"/></svg></button><button id="mbtn" aria-label="Mute music" title="Mute / unmute"></button>
 </div>
 <script>
 (function(){
   var ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>';
   var OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></svg>';
+  var TRACKS=[{id:'j-1rhtVj8_0',t:'Lean Back',a:'Fat Joe, Remy Ma'},{id:'2JeMow1Buw4',t:'where am i supposed to go?',a:'Track 2'}],cur=0;
   var p,ready=false,muted=false,started=false,btn=document.getElementById('mbtn'),st=document.getElementById('mstate');
-  function ui(){btn.innerHTML=muted?OFF:ON;btn.setAttribute('aria-label',muted?'Unmute music':'Mute music');st.textContent=started?(muted?'Muted':'Fat Joe, Remy Ma'):'Tap anywhere to play'}
+  function ui(){btn.innerHTML=muted?OFF:ON;btn.setAttribute('aria-label',muted?'Unmute music':'Mute music');st.textContent=started?(muted?'Muted':TRACKS[cur].a):'Tap anywhere to play';document.getElementById('mtitle').textContent=TRACKS[cur].t}
+  function play(i){cur=(i+TRACKS.length)%TRACKS.length;p.loadVideoById(TRACKS[cur].id);p.setVolume(+document.getElementById('mvol').value);if(muted)p.mute();ui()}
   function go(){if(!ready||started&&!muted&&p.getPlayerState()===1)return;try{p.unMute();p.setVolume(70);p.playVideo()}catch(e){}}
   var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
   window.onYouTubeIframeAPIReady=function(){
-    p=new YT.Player('ytp',{width:'96',height:'54',videoId:'j-1rhtVj8_0',playerVars:{autoplay:1,loop:1,playlist:'j-1rhtVj8_0',controls:0,playsinline:1,rel:0,modestbranding:1},
+    p=new YT.Player('ytp',{width:'96',height:'54',videoId:'j-1rhtVj8_0',playerVars:{autoplay:1,controls:0,playsinline:1,rel:0,modestbranding:1},
       events:{onReady:function(){ready=true;p.setVolume(70);p.playVideo()},
-        onStateChange:function(e){if(e.data===1){started=true;ui()}if(e.data===0)p.playVideo()}}})};
+        onStateChange:function(e){if(e.data===1){started=true;ui()}if(e.data===0)play(cur+1)}}})};
   ['pointerdown','keydown','touchstart'].forEach(function(ev){window.addEventListener(ev,function f(){if(started&&p&&p.getPlayerState&&p.getPlayerState()===1){window.removeEventListener(ev,f);return}go()},{passive:true})});
   btn.addEventListener('click',function(e){e.stopPropagation();if(!ready)return;muted=!muted;if(muted)p.mute();else{p.unMute();p.playVideo()}ui()});
   btn.addEventListener('pointerdown',function(e){e.stopPropagation()});
   var v=document.getElementById('mvol');v.addEventListener('input',function(){if(!ready)return;var n=+v.value;p.setVolume(n);if(n===0&&!muted){muted=true;p.mute()}else if(n>0&&muted){muted=false;p.unMute()}ui()});v.addEventListener('pointerdown',function(e){e.stopPropagation()});
+  var nx=document.getElementById('mnext');nx.addEventListener('click',function(e){e.stopPropagation();if(ready)play(cur+1)});nx.addEventListener('pointerdown',function(e){e.stopPropagation()});
   ui();
 })();
 </script>
