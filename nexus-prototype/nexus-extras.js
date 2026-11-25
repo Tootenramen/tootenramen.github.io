@@ -465,5 +465,139 @@
     window.addEventListener('keydown', function f(e) { if (document.getElementById('enter') && (e.key === 'Enter' || e.key === ' ')) { enter(); } });
   })();
 
+/* =========================================================
+     6. VOICE: talk to Nex, watch the whole agent build itself
+     ========================================================= */
+  var vcss = document.createElement('style');
+  vcss.textContent = [
+    '#vx{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);width:min(580px,92vw);z-index:95;padding:16px 18px;border-radius:26px;background:var(--pop);backdrop-filter:blur(36px) saturate(1.8);-webkit-backdrop-filter:blur(36px) saturate(1.8);border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.4);color:var(--text);animation:tsin .4s cubic-bezier(.2,.8,.2,1)}',
+    '#vx .vt{display:flex;align-items:center;gap:14px}',
+    '#vx .vo{width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);border:0;cursor:pointer;position:relative}',
+    '#vx .vo svg{width:20px;height:20px}',
+    '#vx .vo::before,#vx .vo::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--accent);opacity:0}',
+    '#vx.l .vo::before{animation:vring 1.6s ease-out infinite}#vx.l .vo::after{animation:vring 1.6s ease-out .8s infinite}',
+    '#vx.s .vo{animation:vbeat .5s ease-in-out infinite alternate}',
+    '@keyframes vring{from{transform:scale(1);opacity:.7}to{transform:scale(2.1);opacity:0}}',
+    '@keyframes vbeat{to{transform:scale(1.14)}}',
+    '#vx .vm{flex:1;min-width:0}#vx .vs{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}',
+    '#vx .vq{font-size:.98rem;font-weight:600;line-height:1.35;margin-top:2px;min-height:1.35em}',
+    '#vx .vn{font-size:.82rem;color:var(--muted);margin-top:4px;min-height:1.2em}',
+    '#vx .vb{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}',
+    '#vx .vb input{flex:1;min-width:150px;padding:.55rem .8rem;border-radius:12px;border:1px solid var(--line2);background:var(--hover);color:var(--text);font:inherit;font-size:.85rem;outline:none}',
+    '#vx .vx2{position:absolute;top:8px;right:12px;background:none;border:0;color:var(--muted);font-size:1.2rem;cursor:pointer}',
+    '.nd.vin{animation:vpop .55s cubic-bezier(.2,1.4,.3,1)}',
+    '@keyframes vpop{from{transform:scale(.2);opacity:0}to{transform:none;opacity:1}}'
+  ].join('\n');
+  document.head.appendChild(vcss);
+
+  var VSR = window.SpeechRecognition || window.webkitSpeechRecognition, vRec = null, vOn = false, vBusy = false, vVoice = true, vCtx = null;
+  function blip(f) {
+    try {
+      vCtx = vCtx || new (window.AudioContext || window.webkitAudioContext)();
+      var o = vCtx.createOscillator(), g = vCtx.createGain(); o.type = 'sine'; o.frequency.value = f || 660;
+      g.gain.setValueAtTime(.0001, vCtx.currentTime); g.gain.exponentialRampToValueAtTime(.08, vCtx.currentTime + .02); g.gain.exponentialRampToValueAtTime(.0001, vCtx.currentTime + .22);
+      o.connect(g); g.connect(vCtx.destination); o.start(); o.stop(vCtx.currentTime + .25);
+    } catch (e) {}
+  }
+  function duck(on) {
+    var v = document.getElementById('mvol'); if (!v) return;
+    if (on) { if (+v.value > 20 && !v._was) { v._was = v.value; v.value = 12; v.dispatchEvent(new Event('input')); } }
+    else if (v._was) { v.value = v._was; v._was = null; v.dispatchEvent(new Event('input')); }
+  }
+  function say(text, cap) {
+    var vx = document.getElementById('vx'); if (!vx) return Promise.resolve();
+    var n = vx.querySelector('.vn'); if (n) n.textContent = cap || text;
+    var buddy = document.getElementById('buddy'), ms = (500 + text.length * 62) * (window.__vfast || 1);
+    vx.classList.remove('l'); vx.classList.add('s'); if (buddy) buddy.classList.add('talk');
+    return new Promise(function (res) {
+      var done = false, fin = function () { if (done) return; done = true; if (buddy) buddy.classList.remove('talk'); var x = document.getElementById('vx'); if (x) x.classList.remove('s'); res(); };
+      if (vVoice && window.speechSynthesis) {
+        try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(text); u.rate = 1.05; u.pitch = 1.12; u.onend = fin; u.onerror = fin; speechSynthesis.speak(u); } catch (e) {}
+      }
+      setTimeout(fin, ms + (vVoice && window.speechSynthesis ? 2500 : 0));
+    });
+  }
+  function vSet(st, q) { var vx = document.getElementById('vx'); if (!vx) return; if (st != null) vx.querySelector('.vs').textContent = st; if (q != null) vx.querySelector('.vq').textContent = q; }
+  function vClose() {
+    vOn = false; vBusy = false; if (vRec) { try { vRec.abort(); } catch (e) {} vRec = null; }
+    try { speechSynthesis.cancel(); } catch (e) {} duck(false);
+    var b = document.getElementById('buddy'); if (b) b.classList.remove('talk');
+    var x = document.getElementById('vx'); if (x) x.remove();
+  }
+  function listen() {
+    var vx = document.getElementById('vx'); if (!vx || vBusy) return;
+    vx.classList.add('l'); vSet('Listening', 'Say what you want an agent to do…');
+    if (!VSR) { vSet('Type or tap a demo', 'This browser has no speech recognition. Type it, or try a demo.'); vx.classList.remove('l'); return; }
+    try {
+      vRec = new VSR(); vRec.lang = 'en-US'; vRec.interimResults = true; vRec.continuous = false;
+      vRec.onresult = function (e) {
+        var t = '', fin = false; for (var i = e.resultIndex; i < e.results.length; i++) { t += e.results[i][0].transcript; if (e.results[i].isFinal) fin = true; }
+        vSet('Listening', '“' + t + '”'); if (fin) { vRec = null; vRun(t); }
+      };
+      vRec.onerror = function (e) { if (!vBusy) { vx.classList.remove('l'); vSet('Mic unavailable', e.error === 'not-allowed' ? 'Allow the microphone, or type below.' : 'Type it below, or try a demo.'); } };
+      vRec.onend = function () { if (!vBusy && vOn && vRec) { vx.classList.remove('l'); } };
+      vRec.start();
+    } catch (e) { vx.classList.remove('l'); vSet('Type or tap a demo', 'Mic could not start. Type it below.'); }
+  }
+  async function vRun(text) {
+    text = (text || '').trim(); if (!text || vBusy) return;
+    vBusy = true; var vx = document.getElementById('vx'); if (!vx) return;
+    vx.classList.remove('l'); vx.querySelector('.vb').style.display = 'none';
+    var sp = parse(text); duck(true);
+    vSet('Nex heard you', '“' + text + '”');
+    var tl = sp.tools.length ? sp.tools.join(', ').replace(/, ([^,]*)$/, ' and $1') : 'no extra tools';
+    await say('Got it. I will build a ' + sp.name + ' that uses ' + tl + '. Watch this.', 'Got it. Building “' + sp.name + '” with ' + tl + '.');
+    if (!vOn) return;
+    var f = specToFlow(sp); newWf(sp.name + ' flow', [], []);
+    if (location.hash === '#/workflows') render(); else location.hash = '#/workflows';
+    await sleep(700); if (current !== 'Workflows') render(); await sleep(250);
+    var w = curWf(), lines = { trigger: 'First, the trigger.', transform: 'Then it fetches the data.', agent: 'Here is the agent itself.', branch: 'A checkpoint, so you stay in control.', output: 'And finally, where the result goes.' };
+    for (var i = 0; i < f.nodes.length && vOn; i++) {
+      var n = f.nodes[i]; w.nodes.push(n); if (i) w.edges.push([f.nodes[i - 1].id, n.id]); save(); paint();
+      var el = document.querySelector('.nd[data-id="' + n.id + '"]'); if (el) el.classList.add('vin');
+      blip(520 + i * 110); vSet('Building · step ' + (i + 1) + ' of ' + f.nodes.length, n.label);
+      await say(lines[n.type] || 'Another step.', NT[n.type].n + ': ' + n.label); await sleep(150);
+    }
+    if (!vOn) return;
+    S.data.agents.push({ name: sp.name, desc: sp.role }); save(); blip(880);
+    vSet('Running it', sp.name); await say('Built. Now I will run it for real.', 'Running the workflow…');
+    await runWf(); if (!vOn) return;
+    vSet('Done', sp.name + ' is ready');
+    await say('Done. Your agent is saved and ready. Press V any time to build another.', 'Done. “' + sp.name + '” is saved. Press V to build another.');
+    duck(false); vBusy = false;
+    var b = vx.querySelector('.vb'); if (b) b.style.display = '';
+    vSet('Ready for another', 'Press the mic and talk again.');
+  }
+  var MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>';
+  function voice(auto) {
+    if (document.getElementById('vx')) { vClose(); return; }
+    var b = document.getElementById('buddy'); if (b) b.classList.remove('open'); closeAll();
+    vOn = true; vBusy = false;
+    var demo = 'Every weekday at 9, summarize new Jira tickets and post them to Slack, ask me to approve first';
+    document.body.insertAdjacentHTML('beforeend', '<div id="vx" role="dialog" aria-label="Talk to Nex"><button class="vx2" aria-label="Close" data-x="v-close">×</button><div class="vt"><button class="vo" data-x="v-mic" aria-label="Start listening">' + MIC + '</button><div class="vm"><div class="vs">Ready</div><div class="vq"></div><div class="vn"></div></div></div>' +
+      '<div class="vb"><input id="vtext" placeholder="…or type it here" aria-label="Type what you want"><button class="btn" data-x="v-send">Build</button><button class="btn2" data-x="v-demo" data-t="' + esc(demo) + '">Try a demo</button><button class="btn2" data-x="v-mute" id="vmute">Voice on</button></div></div>');
+    document.getElementById('vtext').addEventListener('keydown', function (e) { if (e.key === 'Enter') vRun(this.value); e.stopPropagation(); });
+    if (auto === 'demo') vRun(demo); else listen();
+  }
+  document.addEventListener('keydown', function (e) {
+    var t = e.target, typing = t && (/^(input|textarea|select)$/i.test(t.tagName) || t.isContentEditable);
+    if (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'v' || e.key === 'V')) { e.preventDefault(); voice(); }
+    else if (e.key === 'Escape' && document.getElementById('vx')) vClose();
+  });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-x]'); if (!b) return; var k = b.dataset.x;
+    if (k === 'voice') voice();
+    else if (k === 'v-close') vClose();
+    else if (k === 'v-mic') { if (vRec) { try { vRec.stop(); } catch (x) {} } else listen(); }
+    else if (k === 'v-send') vRun(document.getElementById('vtext').value);
+    else if (k === 'v-demo') vRun(b.dataset.t);
+    else if (k === 'v-mute') { vVoice = !vVoice; b.textContent = vVoice ? 'Voice on' : 'Voice off'; try { speechSynthesis.cancel(); } catch (x) {} }
+  });
+  if (bub && !bub.querySelector('[data-x=voice]')) {
+    var vb = document.createElement('button'); vb.className = 'pri'; vb.setAttribute('data-x', 'voice'); vb.innerHTML = '🎙 Talk to Nex (press V)';
+    var fb = bub.querySelector('button'); if (fb) { fb.classList.remove('pri'); fb.parentNode.insertBefore(vb, fb); }
+  }
+  window.nexusVoiceDemo = function () { voice('demo'); };
+  
   render();
 })();
