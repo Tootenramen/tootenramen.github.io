@@ -351,11 +351,45 @@
     };
   }
 
+  /* =========================================================
+     4. LEARN: the animated, explain-it-like-I-am-five tutorial
+     ========================================================= */
+  var LESSONS = [
+    { t: 'Meet your tour', g: 'docs/tour.gif', s: 'The tour is like a friendly grown-up who points at things.', d: ['Press the ? at the top, then pick the tour.', 'A little glowing circle shows you where everything lives.', 'Tap Next to move on. Tap Skip any time.'] },
+    { t: 'Pick your look', g: 'docs/looks.gif', s: 'Nexus has two outfits. Light, or dark. You choose.', d: ['Frost is bright and airy, like a snowy day.', 'Lava is dark and glowy, like a night show.', 'Switch whenever you like. Nothing breaks.'] },
+    { t: 'Just say what you want', g: 'docs/describe.gif', s: 'Tell Nex what you need in your own words. Nex does the building.', d: ['Tap Nex in the corner, then Describe it.', 'Type a sentence, like "every morning, summarize my emails".', 'Press Build it. Nex makes the helper and its steps.'] },
+    { t: 'Connect the boxes', g: 'docs/canvas.gif', s: 'Every step is a box. Connect the boxes with a string and they pass the work along.', d: ['Drag a box to move it.', 'Pull from the little dot on its right side to the next box.', 'Press Run workflow and watch the light travel along the strings.'] },
+    { t: 'Watch it think', g: 'docs/theater.gif', s: 'You can peek inside a helper brain while it works.', d: ['Press Run on any agent.', 'See what it thinks, what tools it uses, and what it costs.', 'Drag the slider to rewind and watch it again.'] }
+  ];
+  function learn(start) {
+    var i = Math.min(Math.max(start || 0, 0), LESSONS.length - 1);
+    var sh = openSheet('<div class="learn"></div>', 'wide'), box = sh.querySelector('.learn');
+    function draw() {
+      var L = LESSONS[i];
+      box.innerHTML = '<p class="muted" style="font-size:.74rem;letter-spacing:.08em;text-transform:uppercase">Lesson ' + (i + 1) + ' of ' + LESSONS.length + '</p>' +
+        '<h3 style="margin:2px 0 4px">' + esc(L.t) + '</h3><p style="margin:0 0 12px;font-size:.95rem">' + esc(L.s) + '</p>' +
+        '<div class="lgif"><img src="' + L.g + '" alt="' + esc(L.t) + ' demo"></div>' +
+        '<ol class="lstep">' + L.d.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>' +
+        '<div class="row" style="justify-content:space-between;align-items:center;margin-top:14px"><div class="dots">' + LESSONS.map(function (_, k) { return '<i class="' + (k === i ? 'on' : '') + '"></i>'; }).join('') + '</div>' +
+        '<div class="row"><button class="btn2" data-l="prev"' + (i ? '' : ' disabled style="opacity:.4"') + '>Back</button><button class="btn" data-l="next">' + (i === LESSONS.length - 1 ? 'Done' : 'Next') + '</button></div></div>';
+    }
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-l]'); if (!b) return;
+      if (b.dataset.l === 'prev') { i = Math.max(0, i - 1); draw(); }
+      else if (i === LESSONS.length - 1) closeSheet(); else { i++; draw(); }
+    });
+    draw();
+  }
+  var lcss = document.createElement('style');
+  lcss.textContent = '.lgif{border-radius:16px;overflow:hidden;border:1px solid var(--line2);background:#000;line-height:0}.lgif img{width:100%;display:block}.lstep{margin:14px 0 0;padding-left:20px;font-size:.88rem;line-height:1.7}.lstep li::marker{color:var(--accent);font-weight:700}';
+  document.head.appendChild(lcss);
+
   /* ---------- delegated clicks for all data-x buttons ---------- */
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-x]'); if (!b) return;
     var a = b.dataset.x.split(':'), k = a[0], v = a[1];
-    if (k === 'build') { var p = document.getElementById('buddy'); if (p) p.classList.remove('open'); closeAll(); builder(); }
+    if (k === 'learn') { var pp = document.getElementById('buddy'); if (pp) pp.classList.remove('open'); closeAll(); learn(+v || 0); }
+    else if (k === 'build') { var p = document.getElementById('buddy'); if (p) p.classList.remove('open'); closeAll(); builder(); }
     else if (k === 'bd-ex') { var s = document.getElementById('bd-text'); s.value = document.getElementById('scrim')._ex[+v]; s.focus(); }
     else if (k === 'wf-new') { newWf(); render(); }
     else if (k === 'wf-example') { var f = exampleFlow(); newWf('Example: alert response', f.n, f.e); toast('Example loaded. Press Run!'); render(); }
@@ -394,6 +428,7 @@
   if (bub && !bub.querySelector('[data-x=build]')) {
     var first = bub.querySelector('button'); var nb = document.createElement('button'); nb.className = 'pri'; nb.setAttribute('data-x', 'build'); nb.innerHTML = '✨ Describe an agent in plain words';
     if (first) { first.classList.remove('pri'); first.parentNode.insertBefore(nb, first); }
+    var lb = document.createElement('button'); lb.setAttribute('data-x', 'learn'); lb.textContent = 'Show me how, like I am five'; nb.parentNode.insertBefore(lb, nb.nextSibling);
   }
   /* keep the cmd palette honest: add an entry through a tiny wrapper */
   var baseOpenCmd = openCmd;
