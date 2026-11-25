@@ -437,5 +437,33 @@
     var res = document.querySelector('#scrim .res'), q = document.getElementById('q'); if (!res || !q) return;
     q.addEventListener('keydown', function (e) { if (e.key === 'Enter' && /^describe|^build with nex/i.test(q.value)) { e.stopImmediatePropagation(); closeSheet(); builder(); } }, true);
   };
+  /* =========================================================
+     5. ENTER SCREEN: browsers only allow sound after a first tap,
+        so this one tap starts the music with sound straight away
+     ========================================================= */
+  (function () {
+    var s = document.createElement('style');
+    s.textContent = '#enter{position:fixed;inset:0;z-index:120;display:grid;place-items:center;background:rgba(8,8,12,.55);backdrop-filter:blur(26px) saturate(1.6);-webkit-backdrop-filter:blur(26px) saturate(1.6);transition:opacity .6s,visibility .6s}' +
+      'html.frost #enter{background:rgba(238,241,251,.55)}' +
+      '#enter.gone{opacity:0;visibility:hidden}' +
+      '#enter .ec{text-align:center;color:var(--text);padding:24px;animation:tsin .7s cubic-bezier(.2,.8,.2,1)}' +
+      '#enter h2{font-size:clamp(2.2rem,7vw,3.6rem);letter-spacing:-.03em;margin:0 0 6px;font-weight:700}' +
+      '#enter p{margin:0 0 26px;color:var(--muted);font-size:1.02rem}' +
+      '#enter button{display:inline-flex;align-items:center;gap:12px;padding:1rem 2.2rem;border-radius:999px;border:0;background:var(--accent);color:var(--on-accent);font-size:1.05rem;font-weight:600;cursor:pointer;box-shadow:0 18px 50px rgba(0,0,0,.35);transition:transform .2s;font-family:inherit}' +
+      '#enter button:hover{transform:scale(1.06)}' +
+      '#enter .eq{display:inline-flex;gap:3px;align-items:flex-end;height:16px}#enter .eq i{width:3px;background:currentColor;border-radius:2px;animation:eqb .9s ease-in-out infinite}' +
+      '#enter .eq i:nth-child(2){animation-delay:.15s}#enter .eq i:nth-child(3){animation-delay:.3s}#enter .eq i:nth-child(4){animation-delay:.45s}' +
+      '@keyframes eqb{0%,100%{height:4px}50%{height:16px}}' +
+      '#enter small{display:block;margin-top:18px;font-size:.74rem;color:var(--muted)}';
+    document.head.appendChild(s);
+    var d = document.createElement('div'); d.id = 'enter'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Enter Nexus');
+    d.innerHTML = '<div class="ec"><h2>Nexus</h2><p>Your AI agents, finally somewhere calm.</p><button id="enterBtn" type="button"><span class="eq"><i></i><i></i><i></i><i></i></span>Press to enter</button><small>Sound on. Turn it down any time with the player in the corner.</small></div>';
+    document.body.appendChild(d);
+    var btn = document.getElementById('enterBtn'); btn.focus();
+    var enter = function () { d.classList.add('gone'); setTimeout(function () { d.remove(); }, 700); };
+    d.addEventListener('click', enter);
+    window.addEventListener('keydown', function f(e) { if (document.getElementById('enter') && (e.key === 'Enter' || e.key === ' ')) { enter(); } });
+  })();
+
   render();
 })();
