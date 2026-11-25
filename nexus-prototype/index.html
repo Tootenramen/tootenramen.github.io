@@ -157,10 +157,11 @@
 #music .meta{display:flex;flex-direction:column;min-width:0;max-width:130px}
 #music .t{font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #music .a{font-size:.68rem;color:var(--muted);white-space:nowrap}
+#mvol{width:70px;accent-color:var(--accent);cursor:pointer;flex:none}
 #mbtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);background:var(--hover);color:var(--text);display:grid;place-items:center;cursor:pointer;flex:none;transition:.2s}
 #mbtn:hover{transform:scale(1.08)}
 #mbtn svg{width:18px;height:18px}
-@media(max-width:700px){#music{left:10px;bottom:96px;padding:6px 10px 6px 6px}#music .vid{width:72px;height:41px}#music .meta{max-width:92px}}
+@media(max-width:700px){#mvol{width:54px}#music{left:10px;bottom:96px;padding:6px 10px 6px 6px}#music .vid{width:72px;height:41px}#music .meta{max-width:92px}}
 </style>
 </head>
 <body>
@@ -486,7 +487,7 @@ if(!S.tourDone)setTimeout(()=>{if(!S.tourDone&&$('#tour').style.display!=='block
 <div id="music" role="group" aria-label="Music player">
   <div class="vid"><div id="ytp"></div></div>
   <div class="meta"><span class="t">Lean Back</span><span class="a" id="mstate">Tap anywhere to play</span></div>
-  <button id="mbtn" aria-label="Mute music" title="Mute / unmute"></button>
+  <input id="mvol" type="range" min="0" max="100" value="70" aria-label="Volume"><button id="mbtn" aria-label="Mute music" title="Mute / unmute"></button>
 </div>
 <script>
 (function(){
@@ -503,6 +504,7 @@ if(!S.tourDone)setTimeout(()=>{if(!S.tourDone&&$('#tour').style.display!=='block
   ['pointerdown','keydown','touchstart'].forEach(function(ev){window.addEventListener(ev,function f(){if(started&&p&&p.getPlayerState&&p.getPlayerState()===1){window.removeEventListener(ev,f);return}go()},{passive:true})});
   btn.addEventListener('click',function(e){e.stopPropagation();if(!ready)return;muted=!muted;if(muted)p.mute();else{p.unMute();p.playVideo()}ui()});
   btn.addEventListener('pointerdown',function(e){e.stopPropagation()});
+  var v=document.getElementById('mvol');v.addEventListener('input',function(){if(!ready)return;var n=+v.value;p.setVolume(n);if(n===0&&!muted){muted=true;p.mute()}else if(n>0&&muted){muted=false;p.unMute()}ui()});v.addEventListener('pointerdown',function(e){e.stopPropagation()});
   ui();
 })();
 </script>
