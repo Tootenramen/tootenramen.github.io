@@ -4,7 +4,7 @@
 <filter id="gl5" x="-5%" y="-30%" width="110%" height="160%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><style>text{font-family:Impact,'Arial Black','Haettenschweiler',sans-serif}.m{font-family:Consolas,'SF Mono',Menlo,monospace;font-weight:700}.ray{animation:wp linear infinite;transform-origin:0 0;opacity:0}@keyframes wp{0%{transform:scale(.05);opacity:0}20%{opacity:1}100%{transform:scale(3.4);opacity:0}}
 .pr{animation:prp 1.4s ease-in-out infinite}@keyframes prp{50%{stroke-opacity:.35;stroke-width:6}}
 .loud5{animation:l5 1.4s ease-in-out infinite}@keyframes l5{50%{opacity:.7}}
-.reel{animation:rl 40s linear infinite}@keyframes rl{to{transform:translateX(-1824px)}}
+.reel{animation:rl 40s linear infinite}@keyframes rl{from{transform:translateX(-1824px)}to{transform:translateX(0)}}
 .sw5{animation:sw 4s linear infinite}@keyframes sw{from{transform:translateY(-40px)}to{transform:translateY(440px)}}
 .cta6{animation:ct 1.2s ease-in-out infinite}@keyframes ct{50%{opacity:.7}}
 .cur6{animation:cu 1.2s ease-in-out infinite}@keyframes cu{0%,100%{transform:translate(1228px,48px)}50%{transform:translate(1222px,42px)}}

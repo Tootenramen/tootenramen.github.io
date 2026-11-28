@@ -4,7 +4,7 @@
 <filter id="gl5" x="-5%" y="-30%" width="110%" height="160%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="bl6" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="38"/></filter><linearGradient id="aur6" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7ffff0"/><stop offset=".35" stop-color="#9dffb8"/><stop offset=".65" stop-color="#b79cff"/><stop offset="1" stop-color="#ff9be8"/></linearGradient><linearGradient id="aur6h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#19ffb0"/><stop offset=".5" stop-color="#7c5cff"/><stop offset="1" stop-color="#ff5fd2"/></linearGradient></defs><style>text{font-family:Impact,'Arial Black','Haettenschweiler',sans-serif}.m{font-family:Consolas,'SF Mono',Menlo,monospace;font-weight:700}.ray{animation:wp linear infinite;transform-origin:0 0;opacity:0}@keyframes wp{0%{transform:scale(.05);opacity:0}20%{opacity:1}100%{transform:scale(3.4);opacity:0}}
 .pr{animation:prp 1.4s ease-in-out infinite}@keyframes prp{50%{stroke-opacity:.35;stroke-width:6}}
 .loud5{animation:l5 1.4s ease-in-out infinite}@keyframes l5{50%{opacity:.7}}
-.reel{animation:rl 40s linear infinite}@keyframes rl{to{transform:translateX(-1824px)}}
+.reel{animation:rl 40s linear infinite}@keyframes rl{from{transform:translateX(-1824px)}to{transform:translateX(0)}}
 .sw5{animation:sw 4s linear infinite}@keyframes sw{from{transform:translateY(-40px)}to{transform:translateY(440px)}}
 .au1{animation:a1 9s ease-in-out infinite}.au2{animation:a1 12s ease-in-out infinite reverse}.au3{animation:a1 7s ease-in-out infinite}
 @keyframes a1{50%{transform:translate(120px,30px)}}
